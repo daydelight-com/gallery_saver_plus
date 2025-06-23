@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver_plus/files.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class GallerySaver {
   static const String channelName = 'gallery_saver';
@@ -79,14 +79,15 @@ class GallerySaver {
       {Map<String, String>? headers}) async {
     print(url);
     print(headers);
+    final uri = Uri.parse(url);
     http.Client _client = new http.Client();
-    var req = await _client.get(Uri.parse(url), headers: headers);
+    var req = await _client.get(uri, headers: headers);
     if (req.statusCode >= 400) {
       throw HttpException(req.statusCode.toString());
     }
     var bytes = req.bodyBytes;
     String dir = (await getTemporaryDirectory()).path;
-    File file = new File('$dir/${basename(url)}');
+    File file = new File('$dir/${basename(uri.path)}');
     await file.writeAsBytes(bytes);
     print('File size:${await file.length()}');
     print(file.path);
